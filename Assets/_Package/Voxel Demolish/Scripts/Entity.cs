@@ -12,6 +12,7 @@ public class Entity : MonoBehaviour
     private int _count;
     private int _maxCount;
     public event Action<int,int> OnUpdateCount;
+    public event Action OnDestroy;
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -65,6 +66,10 @@ public class Entity : MonoBehaviour
         
         _count = GetComponentsInChildren<Cube>().Length;
         OnUpdateCount?.Invoke(_count,_maxCount);
+        if (_count == 0)
+        {
+            OnDestroy?.Invoke();
+        }
         
         if (freeCubeIds.Count == 0)
         {

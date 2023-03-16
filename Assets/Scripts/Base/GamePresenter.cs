@@ -1,46 +1,37 @@
-using Core.Player;
+using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace Base
 {
     public class GamePresenter : MonoBehaviour
     {
-        [SerializeField] private DeathPlayer _player;
-        public UnityEvent OnInit;
-        public UnityEvent OnStartGame;
-        public UnityEvent OnWin;
-        public UnityEvent OnLose;
-
+        [SerializeField] private Entity _monster;
+        [SerializeField] private GameObject _winPanel;
+        [SerializeField] private Button _restartButton;
+        
         #region Enable / Disable
-
         private void OnEnable()
         {
-            _player.OnDeath += Lose;
+            _monster.OnDestroy += Win;
         }
-
+        
         private void OnDisable()
         {
-            _player.OnDeath -= Lose;
+            _monster.OnDestroy -= Win;
         }
 
         #endregion
-        private void Awake()
+        private void Win()
         {
-            OnInit?.Invoke();
-        }
-
-        public void StartGame()
-        {
-            OnStartGame?.Invoke();
-        }
-        public void Win()
-        {
-            OnWin?.Invoke();
-        }
-        private void Lose()
-        {
-            OnLose?.Invoke();
+            _restartButton.transform.localScale = Vector3.zero;
+            _restartButton.enabled = false;
+            
+            _winPanel.gameObject.SetActive(true);
+            _restartButton.transform.DOScale(1, 0.5f).OnComplete(() =>
+            {
+                _restartButton.enabled = true;
+            });
         }
     }
 }

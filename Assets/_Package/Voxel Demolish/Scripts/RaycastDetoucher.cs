@@ -1,10 +1,11 @@
+using System;
 using UnityEngine;
 
 public class RaycastDetoucher : MonoBehaviour
 {
-    [SerializeField] private float _explosionRadius = 1.5f;
+    private float _explosionRadius;
     private Camera _camera;
-
+    public event Action<Vector3> OnDetouch;
     private void Start()
     {
         _camera = Camera.main;
@@ -12,12 +13,15 @@ public class RaycastDetoucher : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetMouseButtonDown(1))
+        if(Input.GetMouseButtonDown(0))
         {
             Raycast();
         }
     }
-
+    public void SetRadius(float radius)
+    {
+        _explosionRadius = radius;
+    }
     private void Raycast()
     {
         Ray r = _camera.ScreenPointToRay(Input.mousePosition);
@@ -28,6 +32,7 @@ public class RaycastDetoucher : MonoBehaviour
                 cube.Destroy();
             }
             Explosion(hit.point);
+            OnDetouch?.Invoke(hit.point);
         }
     }
 
@@ -50,4 +55,6 @@ public class RaycastDetoucher : MonoBehaviour
             }
         }
     }
+
+   
 }

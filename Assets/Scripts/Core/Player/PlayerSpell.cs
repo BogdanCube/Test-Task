@@ -1,3 +1,5 @@
+using Base;
+using Core.Spell;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -5,51 +7,32 @@ namespace Core.Player
 {
     public class PlayerSpell : MonoBehaviour
     {
-        [SerializeField] private RaycastDetoucher _detoucher;
-        [SerializeField,Expandable] private Spell.Spell _starSpell;
-        private Spell.Spell _currentSpell;
+        [SerializeField,Expandable] private Spell.Spell _currentSpell;
+        [SerializeField] private FlyingSpell _prefab;
+        [SerializeField] private Transform _spawnPoint;
+        [SerializeField] private SetterDirection _setter;
+        private bool _isFlying;
+        private FlyingSpell _flyingSpell;
         
-        #region Enable / Disable
-        private void OnEnable()
+        private void Update()
         {
-            _detoucher.OnDetouch += ActivateSpell;
-        }
-        
-        private void OnDisable()
-        {
-            _detoucher.OnDetouch -= ActivateSpell;
+            if (Input.GetMouseButton(0) && _isFlying == false)
+            {
+                LaunchSpell();
+                _isFlying = true;
+            }
         }
 
-        #endregion
-
-        private void Start()
+        private void LaunchSpell()
         {
-            SetSpell(_starSpell);
+            _flyingSpell = Instantiate(_prefab, _spawnPoint.position, Quaternion.identity);
+            _flyingSpell.Construct(_currentSpell,_setter);
+            _flyingSpell.Init(() => _isFlying = false);
         }
-
         public void SetSpell(Spell.Spell spell)
         {
             _currentSpell = spell;
-            _detoucher.SetRadius(_currentSpell.ExplosionRadius);
         }
 
-        private void ActivateSpell(Vector3 position)
-        {
-            if (_currentSpell.IsBaseSpell)
-            {
-                SpawnSpell(_currentSpell,position);
-            }
-            else
-            {
-                SpawnSpell(_currentSpell.FirstParent,position);
-                SpawnSpell(_currentSpell.SecondParent,position);
-            }
-        }
-
-        private void SpawnSpell( Spell.Spell spell, Vector3 position)
-        {
-            var particle = Instantiate(spell.PrefabParticle, position, Quaternion.identity);
-            Destroy(particle, 5);
-        }
     }
 }

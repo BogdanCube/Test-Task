@@ -55,6 +55,4 @@ public class RaycastDetoucher : MonoBehaviour
             }
         }
     }
-
-   
 }

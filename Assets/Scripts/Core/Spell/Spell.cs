@@ -10,7 +10,10 @@ namespace Core.Spell
         public string Name;
         public Sprite Icon;
         public float ExplosionRadius;
-        
+        public float Speed;
+        public Color Color;
+        public Gradient Gradient;
+
         [Space] public bool IsBaseSpell = true;
         [ShowIf("IsBaseSpell")] public GameObject PrefabParticle;
         [HideIf("IsBaseSpell")] [FormerlySerializedAs("_firstParent")]  public Spell FirstParent;
